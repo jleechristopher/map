@@ -11,12 +11,16 @@ protected:
         ADD_TEST(MapTests::singleElementTest);
         ADD_TEST(MapTests::fiveElementTest);
         ADD_TEST(MapTests::useCharKeys);
+        ADD_TEST(MapTests::insertMany);
+        ADD_TEST(MapTests::remappingTest);
     }
 
 private:
 	static bool singleElementTest();
     static bool fiveElementTest();
     static bool useCharKeys();
+    static bool insertMany();
+    static bool remappingTest();
 
     static Test_Registrar<MapTests> registrar;
 };

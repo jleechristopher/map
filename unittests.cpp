@@ -26,12 +26,12 @@ bool MapTests::fiveElementTest()
 	VERIFY_EQ(map.get(1), map.get(10));
 	VERIFY_EQ(map.get(100), 'b');
 	VERIFY_TRUE(map.set(2, 'c'));
-	VERIFY_TRUE(map.set(3, 'd'));
+	VERIFY_TRUE(map.set(-1, 'd'));
 	VERIFY_EQ(map.get(1), 'a');
 	VERIFY_EQ(map.get(10), 'a');
 	VERIFY_EQ(map.get(100), 'b');
 	VERIFY_EQ(map.get(2), 'c');
-	VERIFY_EQ(map.get(3), 'd');
+	VERIFY_EQ(map.get(-1), 'd');
 
 	return true;
 }
@@ -47,3 +47,41 @@ bool MapTests::useCharKeys()
 
 	return true;
 }
+
+bool MapTests::insertMany()
+{
+	MyMap<int, int> map;
+
+	int numElements = 10000;
+	for (int i = 0; i < numElements; ++i)
+	{
+		map.set(i, i);
+	}
+
+	int count = 0;
+	for (int i = 0; i < numElements; ++i)
+	{
+		if (map.get(i) == i)
+		{
+			++count;
+		}
+	}
+	VERIFY_EQ(count, numElements);
+
+	return true; 
+}
+
+// forces multiple remappings with a single set()
+bool MapTests::remappingTest()
+{
+	MyMap<int, int> map;
+	VERIFY_TRUE(map.set(16, 1));
+	VERIFY_TRUE(map.set(32, 1));
+	VERIFY_TRUE(map.set(128, 1));
+	VERIFY_EQ(map.get(16), 1);
+	VERIFY_EQ(map.get(32), 1);
+	VERIFY_EQ(map.get(128), 1);
+
+	return true; 
+}
+

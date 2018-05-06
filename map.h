@@ -45,18 +45,7 @@ public:
         {
             while(true)
             {
-                while(true)
-                {
-                    if (remap()) // remap until successful
-                    {
-                        break;
-                    }
-                    if (m_divisor > 10000)
-                    {
-                        //we've probably gone too far. ABORT 
-                        throw std::invalid_argument( "Ya done did. m_divisor > 10000" );
-                    }
-                }
+                remap();
                 index = converter(key);
                 bin = find(key, index);
                 if (bin >= 0)
@@ -66,7 +55,7 @@ public:
                 }
                 else
                 {
-                    throw std::invalid_argument( "Finished remapping and still can't find a spot. Remap() is probably broken" );
+                    continue; // remap once again
                 }
             }
         }
@@ -77,6 +66,7 @@ public:
     {
         int index = converter(key);
         int bin = find(key, index);
+
         if (bin >= 0)
         {
             return m_data[index][bin]->m_value;
@@ -94,6 +84,7 @@ private:
     bool remap()
     {
         m_divisor = m_divisor * 2; 
+        std::cout << "m_divisor is now " << m_divisor << "\n";
         auto oldVec = m_data;
         m_data.clear();
 
@@ -108,7 +99,7 @@ private:
         }
 
         // copy vals using new divisor
-        for (int index = 0; index < m_divisor; ++index)
+        for (int index = 0; index < m_divisor / 2; ++index)
         {
             for (int bin = 0; bin < NUM_BINS; ++bin)
             {
@@ -116,10 +107,10 @@ private:
                 {
                     auto currentPtr = oldVec[index][bin];
                     int newIndex = converter(currentPtr->m_key);
-                    int newBin = find(currentPtr->m_key, currentPtr->m_value);
+                    int newBin = find(currentPtr->m_key, newIndex);
                     if (newBin >= 0)
                     {
-                        m_data[newIndex][newBin] = currentPtr;
+                        m_data[newIndex][newBin] = oldVec[index][bin];
                     }
                     else
                     {
@@ -162,6 +153,10 @@ private:
 
     int converter(const Key& key)
     {
+        if (key < 0)
+        {
+            return (key * -1) % m_divisor;
+        }
         return key % m_divisor;
     }
 };
