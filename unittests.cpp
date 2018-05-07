@@ -85,3 +85,69 @@ bool MapTests::remappingTest()
 	return true; 
 }
 
+// test O(1) access time
+bool MapTests::timingTest()
+{
+	int numIterations = 1000;
+	int numBins = 45; 
+	double singleElementAvg = 0.0;
+	Timer t;
+
+	MyMap<int, int> map;
+	VERIFY_TRUE(map.set(0, 1));
+	for (int ii = 0; ii < numIterations; ++ii)
+	{
+		t.reset();
+		map.get(0);
+		singleElementAvg += t.elapsed();
+	}
+	singleElementAvg = singleElementAvg / numIterations;
+
+	for (int ii = 1; ii < numIterations; ++ii)
+	{
+		map.set(ii, 1);
+	}
+
+	int count = 0;
+	// since the worst case is checking every bin to get a value, time taken should be at most 
+	// singleElementAvg * numBins. Since there should be some variance, we use numBins + 1
+	for (int ii = 0; ii < numIterations; ++ii)
+	{
+		t.reset();
+		map.get(ii);
+		if (t.elapsed() <= (singleElementAvg * (numBins + 1)))
+		{
+			++count;
+		}
+	}
+
+	VERIFY_EQ(numIterations, count);
+
+	return true; 
+}
+
+bool MapTests::useFloatKeys()
+{
+	MyMap<float, int> map;
+	float current = 1e-38;
+	int ordersMagnitude = 77;
+	for (int ii = 1; ii <= ordersMagnitude; ++ii)
+	{
+		map.set(current, ii);
+		current = current * 10;
+	}
+
+	current = 1e-38;
+	int count = 0; 
+	for (int ii = 1; ii <= ordersMagnitude; ++ii)
+	{
+		if (map.get(current) == ii)
+		{
+			++count;
+		}
+		current = current * 10;
+	}
+	VERIFY_EQ(ordersMagnitude, count);
+
+	return true;
+}

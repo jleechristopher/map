@@ -1,3 +1,19 @@
+// MAP
+// This program uses a simple function to convert a key of any primitive type into a semi-unique
+// integer and promises O(1) access time to data given its key. The data is structured as a vector
+// of arrays. The size of the arrays in the vector are referred to as "bins." The number of bins is
+// the number of duplicates expected to be produced from the conversion function. Since integers
+// and characters are signed, this number is 2. The number of bins for floats is much higher because
+// the range of values a float can take include many orders of magnitude.
+// 
+// NEW PATTERNS IMPLEMENTED
+// 1) Reduced number of magic numbers by using #define preprocessor macros
+// 2) Gave #ifndef macros more unique names to reduce probability of naming collisions
+// 
+// Author: Chris Lee
+// Date: May 6th, 2018
+// Last edited: May 7th, 2018
+
 #ifndef __MY_MAP__
 #define __MY_MAP__
 
@@ -7,7 +23,7 @@
 #include <array>
 #include <stdexcept>
 
-#define NUM_BINS 2 // number of duplicates allowed for a single index
+#define NUM_BINS 46 // number of duplicates allowed for a single index
 #define STARTING_DIVISOR 2
 
 template<typename Key, typename T>
@@ -84,7 +100,6 @@ private:
     bool remap()
     {
         m_divisor = m_divisor * 2; 
-        std::cout << "m_divisor is now " << m_divisor << "\n";
         auto oldVec = m_data;
         m_data.clear();
 
@@ -153,11 +168,21 @@ private:
 
     int converter(const Key& key)
     {
-        if (key < 0)
+        Key temp = key;
+        if (temp < 0)
         {
-            return (key * -1) % m_divisor;
+            temp = temp * -1;
         }
-        return key % m_divisor;
+
+        int count = 0; // since chars can't go above 255 we need to make a cutoff
+        int limit = 45;
+        while ((temp < 1000000) && (count < limit))
+        {
+            temp = temp * 10;
+            ++count;
+        }
+
+        return static_cast<int>(temp) % m_divisor;
     }
 };
 
