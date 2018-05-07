@@ -89,7 +89,7 @@ bool MapTests::remappingTest()
 bool MapTests::timingTest()
 {
 	int numIterations = 1000;
-	int numBins = 45; 
+	int numBins = 46; 
 	double singleElementAvg = 0.0;
 	Timer t;
 

@@ -9,6 +9,7 @@
 // NEW PATTERNS IMPLEMENTED
 // 1) Reduced number of magic numbers by using #define preprocessor macros
 // 2) Gave #ifndef macros more unique names to reduce probability of naming collisions
+// 3) Made functions const where possible
 // 
 // Author: Chris Lee
 // Date: May 6th, 2018
@@ -78,7 +79,7 @@ public:
         return false;
     }
 
-    T& get(const Key& key)
+    T& get(const Key& key) const
     {
         int index = converter(key);
         int bin = find(key, index);
@@ -141,7 +142,7 @@ private:
     }
 
     // -1 signifies no matching keys and no empty spots to place a new one
-    int find(const Key& key, int index)
+    int find(const Key& key, int index) const
     {
         for (int bin = 0; bin < NUM_BINS; ++bin)
         {
@@ -157,7 +158,7 @@ private:
         return -1;
     }
 
-    bool containsValue(const std::shared_ptr<KVStruct>& ptr)
+    bool containsValue(const std::shared_ptr<KVStruct>& ptr) const
     {
         if (static_cast<bool>(ptr))
         {
@@ -166,7 +167,7 @@ private:
         return false;
     }
 
-    int converter(const Key& key)
+    int converter(const Key& key) const
     {
         Key temp = key;
         if (temp < 0)
