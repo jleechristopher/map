@@ -27,7 +27,7 @@
 #define NUM_BINS 46 // number of duplicates allowed for a single index
 #define STARTING_DIVISOR 2
 
-template<typename Key, typename T>
+template<typename Key, typename T, class Hash>
 class MyMap
 {
 private:
@@ -51,7 +51,8 @@ public:
     }
     bool set(const Key& key, const T& value)
     {
-        int index = converter(key);
+        uint64_t hashnumber = Hash(key);
+        int index = converter(hashnumber);
         int bin = find(key, index);
         if (bin >= 0)
         {
